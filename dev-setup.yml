@@ -1,0 +1,87 @@
+---
+- hosts: dev
+  remote_user: root
+  tasks:
+    - name: Install sudo
+      package:
+        name: sudo
+        state: present
+
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Create/add musicallyut to wheel group
+      user: 
+        name: musicallyut 
+        groups: wheel 
+        append: yes 
+        state: present 
+        createhome: yes
+
+    - name: Set up authorized keys for the musicallyut user
+      authorized_key: 
+        user: musicallyut 
+        key: "{{item}}"
+      with_file:
+        - keys/id_ed25519.pub
+
+    - name: Install VIM
+      package:
+        name: vim
+        state: present
+
+    - name: Install vim-plug
+      get_url: 
+        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        dest: /home/musicallyut/.vim/autoload/plug.vim
+        owner: musicallyut
+
+    - name: Install git
+      package:
+        name: git
+        state: present
+
+    - name: Install tmux
+      package:
+        name: tmux
+        state: present
+
+    - name: Copy vimrc
+      copy:
+        src: dotfiles/vimrc
+        dest: /home/musicallyut/.vimrc
+        owner: musicallyut
+
+    - name: Copy bashrc
+      copy:
+        src: dotfiles/bashrc
+        dest: /home/musicallyut/.bashrc
+        owner: musicallyut
+
+    - name: Copy tmux.conf
+      copy:
+        src: dotfiles/tmux.conf
+        dest: /home/musicallyut/.tmux.conf
+        owner: musicallyut
+
+    - name: Copy gitconfig
+      copy:
+        src: dotfiles/gitconfig
+        dest: /home/musicallyut/.gitconfig
+        owner: musicallyut
+
+    - name: Copy gitignore
+      copy:
+        src: dotfiles/gitignore
+        dest: /home/musicallyut/.gitignore
+        owner: musicallyut

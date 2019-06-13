@@ -1,0 +1,5 @@
+*~
+*.orig
+*.sw?
+.DS_Store
+node_modules/

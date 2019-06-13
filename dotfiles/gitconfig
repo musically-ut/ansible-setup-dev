@@ -1,0 +1,22 @@
+[color]
+	branch = auto
+	diff = auto
+        status = auto
+[alias]
+	co = checkout
+	st = status
+        lg = log -p
+        d = describe --dirty
+        hist = log --pretty=format:\" %h %C(yellow)%ad%Creset | %s%C(bold green)%d%Creset %C(blue)[%an]%Creset\" --graph --date=short
+[user]
+	name = Utkarsh Upadhyay
+	email = musically.ut@gmail.com
+[push]
+        # default = simple
+[core]
+	excludesfile = ~/.gitignore
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
