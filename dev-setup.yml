@@ -3,6 +3,9 @@
   remote_user: root
   vars:
       user_name: musicallyut
+      git_user: Utkarsh Upadhyay
+      git_email: musically.ut@gmail.com
+
   tasks:
     
     # User management
@@ -128,6 +131,12 @@
         src: dotfiles/gitconfig
         dest: "/home/{{ user_name }}/.gitconfig"
         owner: "{{ user_name }}"
+
+    - name: Fix user's full name in gitconfig
+      shell: "git config --global user.name '{{ git_user }}'"
+
+    - name: Fix user's email in gitconfig
+      shell: "git config --global user.email '{{ git_email }}'"
 
     - name: Copy gitignore
       copy:
