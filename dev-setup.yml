@@ -32,6 +32,7 @@
       user: 
         name: "{{ user_name }}"
         groups: wheel 
+        shell: /bin/bash
         append: yes 
         state: present 
         createhome: yes
@@ -147,6 +148,13 @@
         src: dotfiles/gitignore
         dest: "/home/{{ user_name }}/.gitignore"
         owner: "{{ user_name }}"
+
+    - name: Ensure ~/bin dir exists
+      become: true
+      become_user: "{{ user_name }}"
+      file: 
+        path: "/home/{{ user_name }}/bin"
+        state: directory
 
     - name: Copy conda.sh
       copy:
