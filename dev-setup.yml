@@ -133,9 +133,13 @@
         owner: "{{ user_name }}"
 
     - name: Fix user's full name in gitconfig
+      become_user: "{{ user_name }}"
+      become: true
       shell: "git config --global user.name '{{ git_user }}'"
 
     - name: Fix user's email in gitconfig
+      become_user: "{{ user_name }}"
+      become: true
       shell: "git config --global user.email '{{ git_email }}'"
 
     - name: Copy gitignore
