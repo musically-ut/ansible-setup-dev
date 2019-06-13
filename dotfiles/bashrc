@@ -164,11 +164,5 @@ fi
 # Load fuzzy file matcher
 [ -f ~/bin/.fzf.bash ] && source ~/.fzf.bash
 
-. /home/utkarshu/torch/install/bin/torch-activate
-
-# Setup for Go-lang
-export GOROOT=/home/utkarshu/prog/go/
-export GOBIN=$GOROOT/bin
-export PATH=$PATH:$GOBIN
-export GOPATH=/home/utkarshu/golang/
-export PATH=$GOPATH/bin:$PATH
+# Activate torch
+[ -f ~/torch/install/bin/torch-activate ] && . ~/torch/install/bin/torch-activate

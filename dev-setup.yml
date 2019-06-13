@@ -2,6 +2,9 @@
 - hosts: dev
   remote_user: root
   tasks:
+    
+    # User management
+
     - name: Install sudo
       package:
         name: sudo
@@ -35,6 +38,8 @@
       with_file:
         - keys/id_ed25519.pub
 
+    # Install dev tools
+
     - name: Install VIM
       package:
         name: vim
@@ -55,6 +60,34 @@
       package:
         name: tmux
         state: present
+
+    - name: Install htop
+      package:
+        name: htop
+        state: present
+
+    - name: Ensures local/z dir exists
+      file: 
+        path: /home/musicallyut/.local/z 
+        state: directory
+        owner: musicallyut
+
+    - name: Install z.sh
+      get_url: 
+        url: https://raw.githubusercontent.com/rupa/z/master/z.sh
+        dest: /home/musicallyut/.local/z/z.sh
+        owner: musicallyut
+
+    - name: Install nvm.sh
+      become: true
+      become_user: musicallyut
+      warn: false
+      shell: >
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+      args:
+        creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+
+    # Copy configuration files
 
     - name: Copy vimrc
       copy:
