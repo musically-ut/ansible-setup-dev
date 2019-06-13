@@ -1,6 +1,8 @@
 ---
 - hosts: dev
   remote_user: root
+  vars:
+      user_name: musicallyut
   tasks:
     
     # User management
@@ -23,18 +25,18 @@
         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
 
-    - name: Create/add musicallyut to wheel group
+    - name: "Create/add {{ user_name }} to wheel group"
       user: 
-        name: musicallyut 
+        name: "{{ user_name }}"
         groups: wheel 
         append: yes 
         state: present 
         createhome: yes
 
-    - name: Set up authorized keys for the musicallyut user
+    - name: "Set up authorized keys for the {{ user_name }} user"
       authorized_key: 
-        user: musicallyut 
-        key: "{{item}}"
+        user: "{{ user_name }}"
+        key: "{{ item }}"
       with_file:
         - keys/id_ed25519.pub
 
@@ -46,10 +48,12 @@
         state: present
 
     - name: Install vim-plug
-      get_url: 
-        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        dest: /home/musicallyut/.vim/autoload/plug.vim
-        owner: musicallyut
+      become: true
+      become_user: "{{ user_name }}"
+      shell:  "curl -fLo /home/{{ user_name }}/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+      args:
+          warn: false
+          creates: "/home/{{ user_name }}/.vim/autoload/plug.vim"
 
     - name: Install git
       package:
@@ -66,55 +70,108 @@
         name: htop
         state: present
 
-    - name: Ensures local/z dir exists
+    - name: Ensure local/z dir exists
+      become: true
+      become_user: "{{ user_name }}"
       file: 
-        path: /home/musicallyut/.local/z 
+        path: "/home/{{ user_name }}/.local/z"
         state: directory
-        owner: musicallyut
 
     - name: Install z.sh
+      become: true
+      become_user: "{{ user_name }}"
       get_url: 
         url: https://raw.githubusercontent.com/rupa/z/master/z.sh
-        dest: /home/musicallyut/.local/z/z.sh
-        owner: musicallyut
+        dest: "/home/{{ user_name }}/.local/z/z.sh"
 
     - name: Install nvm.sh
       become: true
-      become_user: musicallyut
+      become_user: "{{ user_name }}"
       shell: >
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
       args:
         warn: false
-        creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+        creates: "/home/{{ user_name }}/.nvm/nvm.sh"
+
+    - name: Install Node 12
+      become_user: "{{ user_name }}"
+      become_method: su
+      become: true
+      shell: ". /home/{{ user_name }}/.nvm/nvm.sh && nvm install 12"
+      args:
+          creates: "/home/{{ user_name }}/.nvm/versions/node/v12*"
+          executable: bash
+
 
     # Copy configuration files
 
     - name: Copy vimrc
       copy:
         src: dotfiles/vimrc
-        dest: /home/musicallyut/.vimrc
-        owner: musicallyut
+        dest: "/home/{{ user_name }}/.vimrc"
+        owner: "{{ user_name }}"
 
     - name: Copy bashrc
       copy:
         src: dotfiles/bashrc
-        dest: /home/musicallyut/.bashrc
-        owner: musicallyut
+        dest: "/home/{{ user_name }}/.bashrc"
+        owner: "{{ user_name }}"
 
     - name: Copy tmux.conf
       copy:
         src: dotfiles/tmux.conf
-        dest: /home/musicallyut/.tmux.conf
-        owner: musicallyut
+        dest: "/home/{{ user_name }}/.tmux.conf"
+        owner: "{{ user_name }}"
 
     - name: Copy gitconfig
       copy:
         src: dotfiles/gitconfig
-        dest: /home/musicallyut/.gitconfig
-        owner: musicallyut
+        dest: "/home/{{ user_name }}/.gitconfig"
+        owner: "{{ user_name }}"
 
     - name: Copy gitignore
       copy:
         src: dotfiles/gitignore
-        dest: /home/musicallyut/.gitignore
-        owner: musicallyut
+        dest: "/home/{{ user_name }}/.gitignore"
+        owner: "{{ user_name }}"
+
+    - name: Copy conda.sh
+      copy:
+        src: dotfiles/conda.sh
+        dest: "/home/{{ user_name }}/bin/conda.sh"
+        owner: "{{ user_name }}"
+
+        
+    # Install powerline fonts
+
+    - name: Fetch Powerline fonts
+      become: true
+      become_user: "{{ user_name }}"
+      git: 
+        repo: https://github.com/powerline/fonts.git
+        dest: "/home/{{ user_name }}/powerline-fonts"
+
+    - name: Install fonts
+      become: true
+      become_user: "{{ user_name }}"
+      shell: ./install.sh
+      args: 
+        chdir: "/home/{{ user_name }}/powerline-fonts"
+        creates: "/home/{{ user_name }}/.local/share/fonts/Anonymice Powerline.ttf"
+
+        
+    # Install Miniconda.sh
+    
+    - name: Download miniconda
+      become: true
+      become_user: "{{ user_name }}"
+      get_url: 
+        url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        dest: "/home/{{ user_name }}/miniconda.sh"
+
+    - name: Install miniconda
+      become: true
+      become_user: "{{ user_name }}"
+      shell: "bash /home/{{ user_name }}/miniconda.sh -b -p /home/{{ user_name }}/miniconda3"
+      args:
+          creates: "/home/{{ user_name }}/miniconda3"
