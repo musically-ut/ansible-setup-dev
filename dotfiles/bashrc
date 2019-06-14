@@ -41,9 +41,6 @@ source ~/bin/git-completion.bash
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-# Define the prompt
-PS1='\[\033[00;35m\][\A] ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;38m\]\w\[\033[00m\]$(__git_ps1 " (%s)")\n\$ '
-
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
@@ -144,17 +141,21 @@ else
   esac
 fi
 
+SUFFIX=""
 if [ "$SESSION_TYPE" != "local" ]; then
-    PS1="${PS1::-2}[\033[01;31m\](ssh session)\[\033[00m\]$ ";
+    SUFFIX="${SUFFIX}(ssh session)";
 fi
 
 if [ -n "$STY" ]; then
-    PS1="${PS1::-2}[\033[01;34m\](screen)\[\033[00m\]$ ";
+    SUFFIX="${SUFFIX}(screen)";
 fi
 
 if [ -n "$TMUX" ]; then
-    PS1="${PS1::-2}[\033[01;36m\](tmux)\[\033[00m\]$ ";
+    SUFFIX="${SUFFIX}(tmux)";
 fi
+
+# Define the prompt
+PS1='\[\033[00;35m\][\A] ${debian_chroot:+($debian_chroot)} \[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;31m\]${SUFFIX}\[\033[00m\]:\[\033[01;38m\]\w\[\033[00m\]$(__git_ps1 " (%s)")\n\$ '
 
 # Ruby in the path
 if which ruby >/dev/null && which gem >/dev/null; then
