@@ -18,11 +18,12 @@ Setup dev machines using ansible.
 
 ## Tasks
 
- - Creates a user (default: `musicallyut`) on the remote machine and ensure that the user can `sudo` without any passwords.
+ - Create a user (default: `musicallyut`) on the remote machine and ensure that the user can `sudo` without any passwords.
  - Copy over the ssh key to allow me to log into the remote machine easily.
  - Install various packages on the remote machine: `git`, `vim`, `tmux`, `htop`, etc.
- - Copy over all the dotfiles to the remote machine, and setup [`z.sh`](https://github.com/rupa/z).
+ - Copy over all the dotfiles to the remote machine, and setup [`z`](https://github.com/rupa/z).
  - Install the `vim` plugins using `vim-plug`.
+ - Install [`powerline-fonts`](https://github.com/powerline/fonts) on the machine.
  - Set up `nvm` and install Node version 12.
  - Download `miniconda` and extract it.
  
