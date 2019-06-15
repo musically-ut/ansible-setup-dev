@@ -108,11 +108,6 @@
           warn: false
           creates: "/home/{{ user_name }}/.vim/autoload/plug.vim"
 
-    - name: Install vim plugins
-      become: true
-      become_user: "{{ user_name }}"
-      shell:  "vim +PlugInstall +qall"
-
     # Copy configuration files
 
     - name: Copy vimrc
@@ -120,6 +115,11 @@
         src: dotfiles/vimrc
         dest: "/home/{{ user_name }}/.vimrc"
         owner: "{{ user_name }}"
+
+    - name: Install vim plugins
+      become: true
+      become_user: "{{ user_name }}"
+      shell:  "vim +PlugInstall +qall"
 
     - name: Copy bashrc
       copy:
