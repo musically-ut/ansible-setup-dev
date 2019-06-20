@@ -25,6 +25,7 @@ let g:PaperColor_Theme_Options = {
   \   }
   \ }
 
+Plug 'jparise/vim-graphql'
 Plug 'bcicen/vim-vice'
 Plug 'flazz/vim-colorschemes'
 Plug 'rust-lang/rust.vim'
