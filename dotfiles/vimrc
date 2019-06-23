@@ -262,7 +262,7 @@ fun! <SID>StripTrailingWhitespaces()
     let @/=_s
     call cursor(l, c)
 endfun
-autocmd FileType tex,r,octave,matlab,rst,sh,sql,html,javascript,typescript,latex,org,haskell,c,cpp,java,php,ruby,python,md,coffee,less autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+autocmd FileType tex,r,octave,matlab,rst,sh,sql,html,javascript,typescript,latex,org,haskell,c,cpp,java,php,ruby,python,md,coffee,less,yaml autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 autocmd FileType sql setlocal nospell
 autocmd FileType matlab setlocal nospell
 autocmd FileType tex setlocal indentexpr=
