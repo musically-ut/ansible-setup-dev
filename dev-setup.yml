@@ -6,19 +6,30 @@
       git_user: Utkarsh Upadhyay
       git_email: musically.ut@gmail.com
 
+      sshd: ssh
+      sshd_config: /etc/ssh/sshd_config
+
+  handlers:
+    - name: restart sshd
+      service: name=sshd state=restarted
+
   tasks:
-    
+
     # User management
 
     - name: Install sudo
       package:
         name: sudo
         state: present
+      tags:
+        - user
 
     - name: Make sure we have a 'wheel' group
       group:
         name: wheel
         state: present
+      tags:
+        - user
 
     - name: Allow 'wheel' group to have passwordless sudo
       lineinfile:
@@ -27,22 +38,46 @@
         regexp: '^%wheel'
         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
+      tags:
+        - user
 
     - name: "Create/add {{ user_name }} to wheel group"
-      user: 
+      user:
         name: "{{ user_name }}"
-        groups: wheel 
+        groups: wheel
         shell: /bin/bash
-        append: yes 
-        state: present 
+        append: yes
+        state: present
         createhome: yes
+      tags:
+        - user
 
     - name: "Set up authorized keys for the {{ user_name }} user"
-      authorized_key: 
+      authorized_key:
         user: "{{ user_name }}"
         key: "{{ item }}"
       with_file:
         - keys/id_ed25519.pub
+      tags:
+        - user
+
+    - name: Disable empty password login
+      lineinfile: dest={{ sshd_config }} regexp="^#?PermitEmptyPasswords" line="PermitEmptyPasswords no"
+      notify: restart sshd
+      tags:
+        - user
+
+    - name: Disable remote root login
+      lineinfile: dest={{ sshd_config }} regexp="^#?PermitRootLogin" line="PermitRootLogin no"
+      notify: restart sshd
+      tags:
+        - user
+
+    - name: Disable password login
+      lineinfile: dest={{ sshd_config }} regexp="^(#\s*)?PasswordAuthentication " line="PasswordAuthentication no"
+      notify: restart sshd
+      tags:
+        - user
 
     # Install dev tools
 
@@ -50,35 +85,47 @@
       package:
         name: vim
         state: present
+      tags:
+        - dev
 
     - name: Install git
       package:
         name: git
         state: present
+      tags:
+        - dev
 
     - name: Install tmux
       package:
         name: tmux
         state: present
+      tags:
+        - dev
 
     - name: Install htop
       package:
         name: htop
         state: present
+      tags:
+        - dev
 
     - name: Ensure local/z dir exists
       become: true
       become_user: "{{ user_name }}"
-      file: 
+      file:
         path: "/home/{{ user_name }}/.local/z"
         state: directory
+      tags:
+        - dev
 
     - name: Install z.sh
       become: true
       become_user: "{{ user_name }}"
-      get_url: 
+      get_url:
         url: https://raw.githubusercontent.com/rupa/z/master/z.sh
         dest: "/home/{{ user_name }}/.local/z/z.sh"
+      tags:
+        - dev
 
     - name: Install nvm.sh
       become: true
@@ -88,6 +135,8 @@
       args:
         warn: false
         creates: "/home/{{ user_name }}/.nvm/nvm.sh"
+      tags:
+        - dev
 
     - name: Install Node 12
       become_user: "{{ user_name }}"
@@ -97,6 +146,8 @@
       args:
           creates: "/home/{{ user_name }}/.nvm/versions/node/v12*"
           executable: bash
+      tags:
+        - dev
 
     # Prepare VIM
 
@@ -107,6 +158,8 @@
       args:
           warn: false
           creates: "/home/{{ user_name }}/.vim/autoload/plug.vim"
+      tags:
+        - dev
 
     # Copy configuration files
 
@@ -115,86 +168,112 @@
         src: dotfiles/vimrc
         dest: "/home/{{ user_name }}/.vimrc"
         owner: "{{ user_name }}"
+      tags:
+        - dev
 
     - name: Install vim plugins
       become: true
       become_user: "{{ user_name }}"
       shell:  "vim +PlugInstall +qall"
+      tags:
+        - dev
 
     - name: Copy bashrc
       copy:
         src: dotfiles/bashrc
         dest: "/home/{{ user_name }}/.bashrc"
         owner: "{{ user_name }}"
+      tags:
+        - dev
 
     - name: Copy tmux.conf
       copy:
         src: dotfiles/tmux.conf
         dest: "/home/{{ user_name }}/.tmux.conf"
         owner: "{{ user_name }}"
+      tags:
+        - dev
 
     - name: Copy gitconfig
       copy:
         src: dotfiles/gitconfig
         dest: "/home/{{ user_name }}/.gitconfig"
         owner: "{{ user_name }}"
+      tags:
+        - dev
 
     - name: Fix user's full name in gitconfig
       become_user: "{{ user_name }}"
       become: true
       shell: "git config --global user.name '{{ git_user }}'"
+      tags:
+        - dev
 
     - name: Fix user's email in gitconfig
       become_user: "{{ user_name }}"
       become: true
       shell: "git config --global user.email '{{ git_email }}'"
+      tags:
+        - dev
 
     - name: Copy gitignore
       copy:
         src: dotfiles/gitignore
         dest: "/home/{{ user_name }}/.gitignore"
         owner: "{{ user_name }}"
+      tags:
+        - dev
 
     - name: Ensure ~/bin dir exists
       become: true
       become_user: "{{ user_name }}"
-      file: 
+      file:
         path: "/home/{{ user_name }}/bin"
         state: directory
+      tags:
+        - dev
 
     - name: Copy conda.sh
       copy:
         src: dotfiles/conda.sh
         dest: "/home/{{ user_name }}/bin/conda.sh"
         owner: "{{ user_name }}"
+      tags:
+        - dev
 
-        
+
     # Install powerline fonts
 
     - name: Fetch Powerline fonts
       become: true
       become_user: "{{ user_name }}"
-      git: 
+      git:
         repo: https://github.com/powerline/fonts.git
         dest: "/home/{{ user_name }}/powerline-fonts"
+      tags:
+        - dev
 
     - name: Install fonts
       become: true
       become_user: "{{ user_name }}"
       shell: ./install.sh
-      args: 
+      args:
         chdir: "/home/{{ user_name }}/powerline-fonts"
         creates: "/home/{{ user_name }}/.local/share/fonts/Anonymice Powerline.ttf"
+      tags:
+        - dev
 
-        
+
     # Install Miniconda.sh
-    
+
     - name: Download miniconda
       become: true
       become_user: "{{ user_name }}"
-      get_url: 
+      get_url:
         url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         dest: "/home/{{ user_name }}/miniconda.sh"
+      tags:
+        - dev
 
     - name: Install miniconda
       become: true
@@ -202,3 +281,5 @@
       shell: "bash /home/{{ user_name }}/miniconda.sh -b -p /home/{{ user_name }}/miniconda3"
       args:
           creates: "/home/{{ user_name }}/miniconda3"
+      tags:
+        - dev
