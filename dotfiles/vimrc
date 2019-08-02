@@ -73,6 +73,7 @@ Plug 'jmcantrell/vim-virtualenv'
 Plug 'arcticicestudio/nord-vim'
 
 Plug 'nightsense/snow'
+Plug 'lepture/vim-jinja'
 
 " Plug 'eiginn/netrw'
 " Plug 'jelera/vim-javascript-syntax'
@@ -172,6 +173,7 @@ au BufNewFile,BufRead *.conf       set filetype=conf
 au BufNewFile,BufRead *.template   set filetype=html
 au BufNewFile,BufRead nginx.conf   set filetype=nginx
 au BufNewFile,BufRead *.m          set filetype=octave
+au BufNewFile,BufRead *.njk        set ft=jinja
 
 " Do not show the '.orig' or '~' files
 let NERDTreeIgnore=['\~$', '.*\.orig$', '.*\.pyc$']
