@@ -167,3 +167,6 @@ fi
 
 # Activate torch
 [ -f ~/torch/install/bin/torch-activate ] && . ~/torch/install/bin/torch-activate
+
+# add miniconda to bashrc
+export PATH=$PATH:~/miniconda3/bin

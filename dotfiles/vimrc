@@ -208,7 +208,7 @@ if has("gui_running")
   colorscheme solarized
   let g:airline_theme='tomorrow'
 else
-  colorscheme gotham256
+  " colorscheme gotham256
   let g:airline_theme='tomorrow'
   " let g:airline_theme='dark'
 endif
