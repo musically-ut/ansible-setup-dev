@@ -172,6 +172,11 @@
       tags:
         - dev
 
+    - name: Install Ruby
+      package:
+        name: ruby
+        state: present
+
     - name: Install Node 12
       become: true
       become_user: "{{ user_name }}"
