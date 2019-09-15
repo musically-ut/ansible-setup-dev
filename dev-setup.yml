@@ -9,6 +9,8 @@
       sshd: ssh
       sshd_config: /etc/ssh/sshd_config
 
+      ssh_key_file: keys/id_ed25519.pub
+
   handlers:
     - name: restart sshd
       service: name=sshd state=restarted
@@ -23,8 +25,11 @@
         state: present
       tags:
         - user
+      ignore_errors: true
 
     - name: Make sure we have a 'wheel' group
+      become: true
+      become_method: sudo
       group:
         name: wheel
         state: present
@@ -32,6 +37,8 @@
         - user
 
     - name: Allow 'wheel' group to have passwordless sudo
+      become: true
+      become_method: sudo
       lineinfile:
         dest: /etc/sudoers
         state: present
@@ -42,6 +49,8 @@
         - user
 
     - name: "Create/add {{ user_name }} to wheel group"
+      become: true
+      become_method: sudo
       user:
         name: "{{ user_name }}"
         groups: wheel
@@ -53,27 +62,35 @@
         - user
 
     - name: "Set up authorized keys for the {{ user_name }} user"
+      become: true
+      become_method: sudo
       authorized_key:
         user: "{{ user_name }}"
         key: "{{ item }}"
       with_file:
-        - keys/id_ed25519.pub
+        - "{{ ssh_key_file }}"
       tags:
         - user
 
     - name: Disable empty password login
+      become: true
+      become_method: sudo
       lineinfile: dest={{ sshd_config }} regexp="^#?PermitEmptyPasswords" line="PermitEmptyPasswords no"
       notify: restart sshd
       tags:
         - user
 
     - name: Disable remote root login
+      become: true
+      become_method: sudo
       lineinfile: dest={{ sshd_config }} regexp="^#?PermitRootLogin" line="PermitRootLogin no"
       notify: restart sshd
       tags:
         - user
 
     - name: Disable password login
+      become: true
+      become_method: sudo
       lineinfile: dest={{ sshd_config }} regexp="^(#\s*)?PasswordAuthentication " line="PasswordAuthentication no"
       notify: restart sshd
       tags:
@@ -81,7 +98,18 @@
 
     # Install dev tools
 
+    - name: Install Ruby
+      become: true
+      become_method: sudo
+      package:
+        name: ruby
+        state: present
+      tags:
+        - dev
+
     - name: Install VIM
+      become: true
+      become_method: sudo
       package:
         name: vim
         state: present
@@ -89,6 +117,8 @@
         - dev
 
     - name: Install git
+      become: true
+      become_method: sudo
       package:
         name: git
         state: present
@@ -96,6 +126,8 @@
         - dev
 
     - name: Install tmux
+      become: true
+      become_method: sudo
       package:
         name: tmux
         state: present
@@ -103,6 +135,8 @@
         - dev
 
     - name: Install htop
+      become: true
+      become_method: sudo
       package:
         name: htop
         state: present
@@ -139,9 +173,9 @@
         - dev
 
     - name: Install Node 12
-      become_user: "{{ user_name }}"
-      become_method: su
       become: true
+      become_user: "{{ user_name }}"
+      become_method: sudo
       shell: ". /home/{{ user_name }}/.nvm/nvm.sh && nvm install 12"
       args:
           creates: "/home/{{ user_name }}/.nvm/versions/node/v12*"
@@ -154,7 +188,7 @@
     - name: Install vim-plug
       become: true
       become_user: "{{ user_name }}"
-      shell:  "curl -fLo /home/{{ user_name }}/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+      shell: "curl -fLo /home/{{ user_name }}/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
       args:
           warn: false
           creates: "/home/{{ user_name }}/.vim/autoload/plug.vim"
@@ -164,6 +198,7 @@
     # Copy configuration files
 
     - name: Copy vimrc
+      become: true
       copy:
         src: dotfiles/vimrc
         dest: "/home/{{ user_name }}/.vimrc"
@@ -179,6 +214,7 @@
         - dev
 
     - name: Copy bashrc
+      become: true
       copy:
         src: dotfiles/bashrc
         dest: "/home/{{ user_name }}/.bashrc"
@@ -187,6 +223,7 @@
         - dev
 
     - name: Copy tmux.conf
+      become: true
       copy:
         src: dotfiles/tmux.conf
         dest: "/home/{{ user_name }}/.tmux.conf"
@@ -195,6 +232,7 @@
         - dev
 
     - name: Copy gitconfig
+      become: true
       copy:
         src: dotfiles/gitconfig
         dest: "/home/{{ user_name }}/.gitconfig"
@@ -217,6 +255,7 @@
         - dev
 
     - name: Copy gitignore
+      become: true
       copy:
         src: dotfiles/gitignore
         dest: "/home/{{ user_name }}/.gitignore"
@@ -234,6 +273,7 @@
         - dev
 
     - name: Copy conda.sh
+      become: true
       copy:
         src: dotfiles/conda.sh
         dest: "/home/{{ user_name }}/bin/conda.sh"
