@@ -209,7 +209,7 @@
     - name: Install vim plugins
       become: true
       become_user: "{{ user_name }}"
-      shell:  "vim +PlugInstall +qall"
+      shell:  "vim -E -s +PlugInstall +qall || true"
       tags:
         - dev
 
