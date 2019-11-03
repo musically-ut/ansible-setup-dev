@@ -159,7 +159,7 @@ PS1='\[\033[00;35m\][\A] ${debian_chroot:+($debian_chroot)} \[\033[01;32m\]\u@\h
 
 # Ruby in the path
 if which ruby >/dev/null && which gem >/dev/null; then
-    PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+    PATH="$(ruby -e 'puts Gem.user_dir')/bin:$PATH"
 fi
 
 # Load fuzzy file matcher
