@@ -116,7 +116,6 @@ set linebreak
 set spell
 set sw=4
 set background=dark
-" autocmd FileType python compiler pylint
 
 " The backup paranoia
 set backup
@@ -264,10 +263,16 @@ fun! <SID>StripTrailingWhitespaces()
     let @/=_s
     call cursor(l, c)
 endfun
-autocmd FileType tex,r,octave,matlab,rst,sh,sql,html,javascript,typescript,latex,org,haskell,c,cpp,java,php,ruby,python,md,coffee,less,yaml autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
-autocmd FileType sql setlocal nospell
-autocmd FileType matlab setlocal nospell
-autocmd FileType tex setlocal indentexpr=
+
+augroup vimrc
+ " Clear all autocmd
+  autocmd!
+  autocmd FileType tex,r,octave,matlab,rst,sh,sql,html,javascript,typescript,latex,org,haskell,c,cpp,java,php,ruby,python,md,coffee,less,yaml autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+  autocmd FileType sql setlocal nospell
+  autocmd FileType matlab setlocal nospell
+  autocmd FileType tex setlocal indentexpr=
+  autocmd FileType python setlocal cc=88
+augroup END
 
 
 " In the Visual mode, <C-\> instead of opening the list of files (via Ctrl-P),
