@@ -47,14 +47,14 @@ Plug 'tpope/vim-sleuth'
 Plug 'gerw/vim-latex-suite'
 Plug 'vim-scripts/YankRing.vim'
 Plug 'groenewege/vim-less'
-Plug 'Lokaltog/vim-easymotion'
+" Plug 'Lokaltog/vim-easymotion'
 Plug 'othree/html5.vim'
 Plug 'chrisbra/unicode.vim'
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/octave.vim--'
 Plug 'tpope/vim-rsi'
-Plug 'terryma/vim-expand-region'
+" Plug 'terryma/vim-expand-region'
 " Plug 'davidhalter/jedi-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -64,7 +64,7 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'hynek/vim-python-pep8-indent'
 Plug 'mhinz/vim-signify'
 Plug 'mhinz/vim-startify'
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
 
 Plug 'whatyouhide/vim-gotham'
 Plug 'majutsushi/tagbar'
@@ -77,6 +77,8 @@ Plug 'lepture/vim-jinja'
 
 " Plug 'eiginn/netrw'
 " Plug 'jelera/vim-javascript-syntax'
+
+Plug 'psf/black'
 
 call plug#end()
 
@@ -207,7 +209,7 @@ if has("gui_running")
   colorscheme solarized
   let g:airline_theme='tomorrow'
 else
-  colorscheme gotham256
+  " colorscheme gotham256
   let g:airline_theme='tomorrow'
   " let g:airline_theme='dark'
 endif
