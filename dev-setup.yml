@@ -127,6 +127,24 @@
       tags:
         - dev
 
+    - name: Install Python3
+      become: true
+      become_method: sudo
+      package:
+        name: python3
+        state: present
+      tags:
+        - dev
+
+    - name: Install Python3-pip
+      become: true
+      become_method: sudo
+      package:
+        name: python3-pip
+        state: present
+      tags:
+        - dev
+
     - name: Install VIM
       become: true
       become_method: sudo
