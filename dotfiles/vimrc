@@ -233,7 +233,7 @@ let g:syntastic_python_flake8_args='--ignore=E501,E127,E221,E272,E203,E402'
 " let g:syntastic_javascript_checkers = ['eslint']
 " let g:syntastic_javascript_jsx_checkers = ['eslint'] " Does not work.
 
-let g:ale_python_flake8_options='--ignore=E501,E221,E203,E272,E127,E402'
+let g:ale_python_flake8_options='--ignore=E501,E221,E203,E272,E127,E402,W503'
 let g:ale_python_mypy_options='--ignore-missing-imports'
 let g:ale_echo_msg_format = '%linter% says %s'
 
