@@ -17,15 +17,35 @@
 
   tasks:
 
-    # User management
-
     - name: Install sudo
       package:
         name: sudo
         state: present
       tags:
-        - user
+        - user, system
       ignore_errors: true
+
+    - name: Install aptitude
+      become: true
+      become_method: sudo
+      package:
+        name: aptitude
+        state: present
+      tags:
+        - system
+      ignore_errors: true
+
+    - name: Update Ubuntu cache
+      become: true
+      become_method: sudo
+      apt:
+        update_cache: yes
+      tags:
+        - system
+      ignore_errors: true
+
+
+    # User management
 
     - name: Make sure we have a 'wheel' group
       become: true
