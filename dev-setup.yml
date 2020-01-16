@@ -9,7 +9,7 @@
       sshd: ssh
       sshd_config: /etc/ssh/sshd_config
 
-      ssh_key_file: keys/id_ed25519.pub
+      ssh_public_key_file: keys/id_ed25519.pub
 
   handlers:
     - name: restart sshd
@@ -88,7 +88,7 @@
         user: "{{ user_name }}"
         key: "{{ item }}"
       with_file:
-        - "{{ ssh_key_file }}"
+        - "{{ ssh_public_key_file }}"
       tags:
         - user
 
