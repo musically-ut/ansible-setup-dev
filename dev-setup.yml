@@ -1,10 +1,10 @@
 ---
 - hosts: dev
-  remote_user: root
+  remote_user: ec2-user
   vars:
-      user_name: musicallyut
-      git_user: Utkarsh Upadhyay
-      git_email: musically.ut@gmail.com
+      user_name: btabibian
+      git_user: Behzad Tabibian
+      git_email: me@btabibian.com
 
       sshd: ssh
       sshd_config: /etc/ssh/sshd_config
@@ -210,6 +210,11 @@
       tags:
         - dev
 
+    - name: Install Ruby
+      package:
+        name: ruby
+        state: present
+
     - name: Install Node 12
       become: true
       become_user: "{{ user_name }}"
@@ -234,6 +239,19 @@
         - dev
 
     # Copy configuration files
+    - name: Install vim plugins
+      become: true
+      become_user: "{{ user_name }}"
+      shell:  "vim +PlugInstall +qall"
+      tags:
+        - dev
+
+    - name: Copy inputrc
+      become: true
+      copy:
+        src: dotfiles/inputrc
+        dest: "/home/{{ user_name }}/.inputrc"
+        owner: "{{ user_name }}"
 
     - name: Copy vimrc
       become: true
