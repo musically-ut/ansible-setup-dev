@@ -439,3 +439,8 @@ set timeoutlen=1000 ttimeoutlen=0
 
 " Press <F2> to quickly toggle PASTE mode on/off
 set pastetoggle=<F2>
+
+nmap ]n :ALENextWrap<CR>
+nmap ]p :ALEPrevWrap<CR>
+
+
