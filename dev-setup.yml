@@ -126,6 +126,7 @@
         state: present
       tags:
         - dev
+      ignore_errors: true
 
     - name: Install Python3
       become: true
@@ -135,6 +136,7 @@
         state: present
       tags:
         - dev
+      ignore_errors: true
 
     - name: Install Python3-pip
       become: true
@@ -144,6 +146,7 @@
         state: present
       tags:
         - dev
+      ignore_errors: true
 
     - name: Install VIM
       become: true
