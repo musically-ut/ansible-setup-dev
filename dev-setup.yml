@@ -44,6 +44,16 @@
         - system
       ignore_errors: true
 
+    # See: https://github.com/ansible/ansible/issues/74830
+    - name: Install acl
+      become: true
+      become_method: sudo
+      package:
+        name: acl
+        state: present
+      tags:
+        - user, system
+      ignore_errors: true
 
     # User management
 
