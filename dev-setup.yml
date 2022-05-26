@@ -223,13 +223,13 @@
       tags:
         - dev
 
-    - name: Install Node 12
+    - name: Install Node 16
       become: true
       become_user: "{{ user_name }}"
       become_method: sudo
-      shell: ". /home/{{ user_name }}/.nvm/nvm.sh && nvm install 12"
+      shell: ". /home/{{ user_name }}/.nvm/nvm.sh && nvm install 16"
       args:
-          creates: "/home/{{ user_name }}/.nvm/versions/node/v12*"
+          creates: "/home/{{ user_name }}/.nvm/versions/node/v16*"
           executable: bash
       tags:
         - dev
