@@ -216,7 +216,7 @@
       become: true
       become_user: "{{ user_name }}"
       shell: >
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
       args:
         warn: false
         creates: "/home/{{ user_name }}/.nvm/nvm.sh"
